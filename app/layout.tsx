@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Nature Observer — Product Case Study",
   description: "Nature Observer 产品、用户研究、项目发展与反思案例集。",
+  other: { "codex-preview": "development" },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

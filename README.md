@@ -8,7 +8,8 @@
 
 ## Live Case Study
 
-[View the Nature Observer product case study](https://nature-observer-case-study.yinping884824.chatgpt.site)
+- [中文站 / Chinese site](https://nature-observer-case-study.yinping884824.chatgpt.site)
+- [English site](https://nature-observer-case-study-en.yinping884824.chatgpt.site)
 
 ## About the Project
 

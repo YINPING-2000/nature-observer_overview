@@ -824,7 +824,10 @@ export default function Home() {
         <a className="brand" href="#overview" onClick={(event) => { event.preventDefault(); changeTab("overview"); }} aria-label="返回项目概览">
           <span className="brand-mark brand-logo"><img src="/assets/overview/brand-acorn.webp" alt="" /></span><span>Nature Observer<small>An AI - powered Plant Learning Application</small></span>
         </a>
-        <div className="header-meta"><span>Build from · 2025</span><b>keep working</b></div>
+        <div className="header-actions">
+          <a className="language-switch" href="https://nature-observer-case-study-en.yinping884824.chatgpt.site" lang="en" aria-label="Switch to the English version">Switch to English <span aria-hidden="true">↗</span></a>
+          <div className="header-meta"><span>Build from · 2025</span><b>keep working</b></div>
+        </div>
       </header>
       <FolderTabs active={active} onChange={changeTab} />
       <section className="file-shell" id={`panel-${active}`} role="tabpanel" aria-labelledby={`tab-${active}`}>
