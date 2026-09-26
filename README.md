@@ -11,6 +11,11 @@
 - [中文站 / Chinese site](https://nature-observer-case-study.yinping884824.chatgpt.site)
 - [English site](https://nature-observer-case-study-en.yinping884824.chatgpt.site)
 
+## Source Branches
+
+- [`main`](https://github.com/YINPING-2000/nature-observer_overview/tree/main) — Chinese site source
+- [`english`](https://github.com/YINPING-2000/nature-observer_overview/tree/english) — English site source
+
 ## About the Project
 
 Nature Observer is designed for beginner plant enthusiasts. Most plant-identification tools stop after answering “What is it?” Nature Observer extends that moment into a learning process by helping people observe identifying features, explore selected ecological and cultural stories, test their understanding, and save what they have learned.
