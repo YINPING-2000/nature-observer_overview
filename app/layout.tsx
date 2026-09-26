@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Nature Observer — Product Case Study",
-  description: "Nature Observer 产品、用户研究、项目发展与反思案例集。",
+  description: "A product case study covering Nature Observer’s experience design, user research, and project evolution.",
   other: { "codex-preview": "development" },
   icons: {
     icon: "/favicon.svg",
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="en">
       <body className="antialiased">{children}</body>
     </html>
   );
