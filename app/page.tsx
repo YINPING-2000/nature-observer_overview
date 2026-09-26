@@ -7,17 +7,17 @@ type TabId = "overview" | "product" | "research" | "evolution" | "reflection";
 const EDITOR_ENABLED = false;
 
 const tabs: { id: TabId; label: string; eyebrow: string }[] = [
-  { id: "overview", label: "项目概览", eyebrow: "OVERVIEW" },
-  { id: "product", label: "产品介绍", eyebrow: "PRODUCT" },
-  { id: "research", label: "调研过程", eyebrow: "RESEARCH" },
-  { id: "evolution", label: "项目发展", eyebrow: "EVOLUTION" },
+  { id: "overview", label: "Project Overview", eyebrow: "OVERVIEW" },
+  { id: "product", label: "Product", eyebrow: "PRODUCT" },
+  { id: "research", label: "Research", eyebrow: "RESEARCH" },
+  { id: "evolution", label: "Project Evolution", eyebrow: "EVOLUTION" },
 ];
 
 const productSteps = [
-  { number: "01", title: "识别", copy: "拍照或上传感兴趣的植物，快速获得识别结果。" },
-  { number: "02", title: "探索", copy: "从关键特征、生态与人文关系中，理解一株植物。" },
-  { number: "03", title: "观察", copy: "用问题，引导用户观察眼前的植物。" },
-  { number: "04", title: "收藏", copy: "保存植物的识别记录，方便回顾。" },
+  { number: "01", title: "Identify", copy: "Take a photo or upload an image of a plant to identify it quickly." },
+  { number: "02", title: "Explore", copy: "Understand a plant through its defining traits, ecology, and cultural connections." },
+  { number: "03", title: "Observe", copy: "Use guided questions to examine the plant in front of you." },
+  { number: "04", title: "Save", copy: "Save identification records for future review." },
 ];
 
 function FolderTabs({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
@@ -36,8 +36,8 @@ function FolderTabs({ active, onChange }: { active: TabId; onChange: (id: TabId)
   }
 
   return (
-    <nav className="folder-nav" aria-label="案例研究章节">
-      <div className="folder-tabs" role="tablist" aria-label="Nature Observer 项目档案">
+    <nav className="folder-nav" aria-label="Case study sections">
+      <div className="folder-tabs" role="tablist" aria-label="Nature Observer project archive">
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
@@ -75,11 +75,11 @@ function ProductDevice({ src, videoSrc, alt, className = "", scrollable = false 
       {videoSrc ? (
         <video autoPlay muted loop playsInline preload="metadata" poster="/assets/product/quiz-1.png" aria-label={alt}>
           <source src={videoSrc} type="video/mp4" />
-          您的浏览器暂不支持视频播放。
+          Your browser does not support video playback.
         </video>
       ) : src ? (
         scrollable ? (
-          <div className="device-scroll-viewport" role="region" aria-label={`${alt}，可上下滚动`} tabIndex={0}>
+          <div className="device-scroll-viewport" role="region" aria-label={`${alt}; scroll vertically to explore`} tabIndex={0}>
             <img src={src} alt={alt} />
           </div>
         ) : <img src={src} alt={alt} />
@@ -90,10 +90,10 @@ function ProductDevice({ src, videoSrc, alt, className = "", scrollable = false 
 
 function SceneDiagram({ type }: { type: "core" | "education" }) {
   const steps = type === "core"
-    ? ["遇见植物", "拍照识别", "现场观察"]
-    : ["讲解任务", "学生互动", "延伸查看"];
+    ? ["Find a plant", "Identify it", "Observe on site"]
+    : ["Learning prompt", "Student interaction", "Explore further"];
   return (
-    <div className={`scene-diagram scene-${type}`} aria-label={steps.join("，然后")}>
+    <div className={`scene-diagram scene-${type}`} aria-label={steps.join(", then ")}>
       {steps.map((step, index) => (
         <div className="scene-step-wrap" key={step}>
           <span>{String(index + 1).padStart(2, "0")}</span><b>{step}</b>
@@ -188,7 +188,7 @@ function DraftEditor({ active }: { active: TabId }) {
   const [applyVersion, setApplyVersion] = useState(0);
   const [selectedBlockKey, setSelectedBlockKey] = useState<string | null>(null);
   const [selectedBlockLabel, setSelectedBlockLabel] = useState("");
-  const [saveStatus, setSaveStatus] = useState("本地草稿未修改");
+  const [saveStatus, setSaveStatus] = useState("Local draft unchanged");
   const selectedBlockRef = useRef<HTMLElement | null>(null);
   const targetImageRef = useRef<HTMLImageElement | null>(null);
   const draftRef = useRef<SiteDraft>(draft);
@@ -200,22 +200,22 @@ function DraftEditor({ active }: { active: TabId }) {
       .then((savedDraft) => {
         draftRef.current = savedDraft;
         setDraft(savedDraft);
-        setSaveStatus(Object.keys(savedDraft.text).length || savedDraft.hidden.length || Object.keys(savedDraft.images).length ? "已载入本地草稿" : "本地草稿未修改");
+        setSaveStatus(Object.keys(savedDraft.text).length || savedDraft.hidden.length || Object.keys(savedDraft.images).length ? "Local draft loaded" : "Local draft unchanged");
         setIsReady(true);
         setApplyVersion((version) => version + 1);
       })
-      .catch(() => { setSaveStatus("浏览器无法保存草稿"); setIsReady(true); });
+      .catch(() => { setSaveStatus("This browser cannot save drafts"); setIsReady(true); });
   }, []);
 
   function commitDraft(nextDraft: SiteDraft) {
     draftRef.current = nextDraft;
     setDraft(nextDraft);
-    setSaveStatus("正在保存…");
+    setSaveStatus("Saving…");
     if (saveTimerRef.current !== null) window.clearTimeout(saveTimerRef.current);
     saveTimerRef.current = window.setTimeout(() => {
       writeSiteDraft(draftRef.current)
-        .then(() => setSaveStatus("已自动保存到当前浏览器"))
-        .catch(() => setSaveStatus("保存失败，请先导出草稿"));
+        .then(() => setSaveStatus("Autosaved in this browser"))
+        .catch(() => setSaveStatus("Save failed. Please export the draft."));
     }, 350);
   }
 
@@ -271,7 +271,7 @@ function DraftEditor({ active }: { active: TabId }) {
         element.classList.add("is-draft-selected");
         selectedBlockRef.current = element;
         setSelectedBlockKey(element.dataset.draftBlockKey ?? null);
-        setSelectedBlockLabel(element.querySelector("h1,h2,h3,h4")?.textContent?.trim() || "当前板块");
+        setSelectedBlockLabel(element.querySelector("h1,h2,h3,h4")?.textContent?.trim() || "Current section");
       };
 
       const handleClick = (event: MouseEvent) => {
@@ -360,30 +360,30 @@ function DraftEditor({ active }: { active: TabId }) {
     link.download = `nature-observer-draft-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    setSaveStatus("草稿文件已导出");
+    setSaveStatus("Draft file exported");
   }
 
   async function resetDraft() {
-    if (!window.confirm("确定清空当前浏览器中的全部草稿修改吗？此操作不会影响正式网站。")) return;
+    if (!window.confirm("Clear all draft changes stored in this browser? This will not affect the published site.")) return;
     await clearSiteDraft();
     window.location.reload();
   }
 
   return (
-    <aside className={`draft-editor ${isEditing ? "is-editing" : ""}`} aria-label="页面草稿编辑器">
+    <aside className={`draft-editor ${isEditing ? "is-editing" : ""}`} aria-label="Page draft editor">
       <input ref={fileInputRef} className="draft-file-input" type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) replaceImage(file); event.target.value = ""; }} />
       <div className="draft-editor-primary">
         <button className="draft-primary-button" onClick={() => { setIsEditing((value) => !value); setSelectedBlockKey(null); selectedBlockRef.current?.classList.remove("is-draft-selected"); selectedBlockRef.current = null; }}>
-          {isEditing ? "预览草稿" : "编辑草稿"}
+          {isEditing ? "Preview draft" : "Edit draft"}
         </button>
-        <div><b>{isEditing ? "编辑模式" : "草稿预览"}</b><span>{saveStatus}</span></div>
+        <div><b>{isEditing ? "Edit mode" : "Draft preview"}</b><span>{saveStatus}</span></div>
       </div>
-      {isEditing && <div className="draft-selection"><span>{selectedBlockKey ? `已选择：${selectedBlockLabel}` : "点击板块进行选择；点击图片进行替换"}</span>{selectedBlockKey && <button className="draft-danger" onClick={hideSelectedBlock}>删除所选板块</button>}</div>}
+      {isEditing && <div className="draft-selection"><span>{selectedBlockKey ? `Selected: ${selectedBlockLabel}` : "Click a section to select it; click an image to replace it"}</span>{selectedBlockKey && <button className="draft-danger" onClick={hideSelectedBlock}>Delete selected section</button>}</div>}
       <div className="draft-editor-actions">
-        {draft.hidden.length > 0 && <button onClick={restoreLastBlock}>撤销删除</button>}
-        {draft.hidden.length > 1 && <button onClick={restoreAllBlocks}>恢复全部板块</button>}
-        <button onClick={exportDraft}>导出编辑文件</button>
-        <button onClick={resetDraft}>清空草稿</button>
+        {draft.hidden.length > 0 && <button onClick={restoreLastBlock}>Undo deletion</button>}
+        {draft.hidden.length > 1 && <button onClick={restoreAllBlocks}>Restore all sections</button>}
+        <button onClick={exportDraft}>Export edit file</button>
+        <button onClick={resetDraft}>Clear draft</button>
       </div>
     </aside>
   );
@@ -391,15 +391,15 @@ function DraftEditor({ active }: { active: TabId }) {
 
 const overviewTeam = {
   design: [
-    { name: "殷平", detail: "密歇根大学硕士\n景观建筑＋交互设计专业", avatar: "ping" },
-    { name: "朱宁睿", detail: "密歇根大学硕士\n交互设计专业", avatar: "ningrui" },
-    { name: "李方仪", detail: "密歇根大学硕士\n交互设计专业", avatar: "fangyi" },
+    { name: "Ping Yin", detail: "University of Michigan, Master’s\nLandscape Architecture + Interaction Design", avatar: "ping" },
+    { name: "Ningrui Zhu", detail: "University of Michigan, Master’s\nInteraction Design", avatar: "ningrui" },
+    { name: "Fangyi Li", detail: "University of Michigan, Master’s\nInteraction Design", avatar: "fangyi" },
   ],
   tech: [
-    { name: "江佳圆", detail: "密歇根大学硕士\n地理信息科学＋数据科学专业", avatar: "jiayuan" },
-    { name: "卞江畔", detail: "密歇根大学硕士\n地理信息科学专业", avatar: "jiangpan" },
-    { name: "苏隽", detail: "密歇根大学硕士\n应用统计＋数据科学专业", avatar: "junsu" },
-    { name: "张弘昊", detail: "密歇根大学学士\n计算机科学+统计专业", avatar: "honghao" },
+    { name: "Jiayuan Jiang", detail: "University of Michigan, Master’s\nGeospatial Data Sciences + Data Science", avatar: "jiayuan" },
+    { name: "Jiangpan Bian", detail: "University of Michigan, Master’s\nGeospatial Data Sciences", avatar: "jiangpan" },
+    { name: "Jun Su", detail: "University of Michigan, Master’s\nApplied Statistics + Data Science", avatar: "junsu" },
+    { name: "Honghao Zhang", detail: "University of Michigan, Bachelor’s\nComputer Science + Statistics", avatar: "honghao" },
   ],
 };
 
@@ -415,8 +415,8 @@ function TeamMember({ member }: { member: { name: string; detail: string; avatar
   return (
     <article className="team-member">
       {standalone
-        ? <div className={`member-avatar avatar-${member.avatar}`}><img src={standalone} alt={`${member.name}的团队头像`} /></div>
-        : <div className={`member-avatar composite-avatar avatar-${member.avatar}`} role="img" aria-label={`${member.name}的团队头像`} />}
+        ? <div className={`member-avatar avatar-${member.avatar}`}><img src={standalone} alt={`${member.name} team portrait`} /></div>
+        : <div className={`member-avatar composite-avatar avatar-${member.avatar}`} role="img" aria-label={`${member.name} team portrait`} />}
       <div><h4>{member.name}</h4><p>{member.detail.split("\n").map((line) => <span key={line}>{line}</span>)}</p></div>
     </article>
   );
@@ -429,85 +429,85 @@ function OverviewPanel() {
         <div className="tiny-label"><span className="pixel-dot" />NATURE EDUCATION · AI PRODUCT</div>
         <div className="overview-hero-layout">
           <div className="overview-hero-copy">
-            <h1>Nature Observer<br /><span>自然观察家</span></h1>
-            <p>一个 AI 驱动的植物学习工具，帮助用户在公园中识别、观察植物，理解植物背后的故事。</p>
+            <h1>Nature Observer<br /><span>AI Plant Learning App</span></h1>
+            <p>An AI-powered plant learning tool that helps people identify and observe plants in parks—and understand the stories behind them.</p>
             <div className="status-chip"><i /> FIELD TESTED · MVP V2.0</div>
           </div>
           <figure className="overview-hero-composite">
-            <img src="/assets/overview/overview-hero-composite-v2.png" alt="Nature Observer 拍照识别、植物知识和引导观察界面组合" />
+            <img src="/assets/overview/overview-hero-composite-v2.png" alt="Nature Observer identification, plant knowledge, and guided observation screens" />
           </figure>
         </div>
       </section>
 
-      <section className="project-strip overview-project-strip" aria-label="项目基本信息">
-        <div><span>用户</span><strong>初级植物爱好者</strong></div>
-        <div><span>使用场景</span><strong>户外：植物园、公园、街道</strong></div>
-        <div><span>解决问题</span><strong>现有植物识别软件<br />只给结果，丢失学习过程</strong></div>
+      <section className="project-strip overview-project-strip" aria-label="Project summary">
+        <div><span>Users</span><strong>Beginner plant enthusiasts</strong></div>
+        <div><span>Contexts</span><strong>Outdoors: botanical gardens, parks, and streets</strong></div>
+        <div><span>Problem</span><strong>Plant ID tools give an answer,<br />but leave out the learning process</strong></div>
       </section>
 
       <section id="overview-story" className="overview-problem-latest">
-        <SectionHeading index="01" label="核心问题" title="只展示识别结果，丢失学习过程" />
-        <p className="overview-problem-intro">当人们在户外遇到陌生植物时，通常会借助识别工具获得植物名称。但现有体验止步于“它是什么”，而没有解释“它的特征”。由此产生两个问题：</p>
+        <SectionHeading index="01" label="Core Problem" title="Identification shows the answer, but loses the learning process" />
+        <p className="overview-problem-intro">When people encounter an unfamiliar plant outdoors, they often use an identification tool to find its name. But the experience stops at “What is it?” without explaining its defining traits. This creates two problems:</p>
         <div className="overview-problem-grid">
           <article>
-            <div className="overview-problem-illustration memory"><img src="/assets/overview/problem-memory.png" alt="从观察到记忆的示意图" /></div>
-            <h3>被动学习，容易遗忘</h3>
-            <p>用户没有主动观察植物的关键识别特征，识别结果难以形成长期记忆，下次遇见时仍然无法独立辨认。</p>
+            <div className="overview-problem-illustration memory"><img src="/assets/overview/problem-memory.png" alt="Illustration of observation becoming memory" /></div>
+            <h3>Passive learning is easy to forget</h3>
+            <p>Without actively observing a plant’s defining traits, the identification result rarely becomes a lasting memory. The next time people see it, they still cannot recognize it on their own.</p>
           </article>
           <article>
-            <div className="overview-problem-illustration curiosity"><img src="/assets/overview/problem-curiosity.png" alt="植物与生态关系的示意图" /></div>
-            <h3>缺失其他相关信息，无法满足好奇心</h3>
-            <p>植物名称本身无法满足植物爱好者的好奇心。他们还希望了解植物独特的形态、季节变化，以及它与人类、其他生物和生态环境之间的关系。</p>
+            <div className="overview-problem-illustration curiosity"><img src="/assets/overview/problem-curiosity.png" alt="Illustration of a plant and its ecological relationships" /></div>
+            <h3>A name alone cannot satisfy curiosity</h3>
+            <p>Plant enthusiasts also want to learn about a plant’s unique form, seasonal changes, and relationships with people, other species, and the wider ecosystem.</p>
           </article>
         </div>
       </section>
 
       <section className="overview-solution-latest">
-        <div className="section-kicker"><span>02</span>解决方案</div>
-        <h2>将一次性的植物识别转化为主动的观察学习</h2>
-        <div className="overview-solution-flow" aria-label="拍照、识别植物、探索趣味知识、跟随引导观察、保存收藏">
-          <b>拍照</b><i>→</i><b>识别植物</b><i>→</i><b>探索趣味知识</b><i>→</i><b>跟随引导观察</b><i>→</i><b>保存收藏</b>
+        <div className="section-kicker"><span>02</span>Solution</div>
+        <h2>Turn one-off plant identification into active observational learning</h2>
+        <div className="overview-solution-flow" aria-label="Photograph, identify, explore, observe, and save">
+          <b>Photograph</b><i>→</i><b>Identify</b><i>→</i><b>Explore</b><i>→</i><b>Observe</b><i>→</i><b>Save</b>
         </div>
       </section>
 
       <section className="overview-research-latest">
-        <SectionHeading index="03" label="研究方法" title={<>4 种调研方法，<br />明确用户需求与潜在使用场景</>} />
+        <SectionHeading index="03" label="Research Methods" title={<>Four research methods<br />clarified user needs and potential contexts</>} />
         <div className="overview-method-grid">
           <article>
-            <b>106</b><span>份线上问卷</span>
-            <p>广泛理解自然兴趣、观察习惯、困难与工具期待</p>
+            <b>106</b><span>online survey responses</span>
+            <p>Explored interest in nature, observation habits, challenges, and expectations for tools</p>
           </article>
           <article>
-            <b>24</b><span>位现场拦访</span>
-            <p>确认植物园访客画像与科普内容需求</p>
+            <b>24</b><span>on-site intercepts</span>
+            <p>Validated visitor profiles and needs for educational content</p>
           </article>
           <article>
-            <b>15</b><span>人次深度访谈</span>
-            <p>覆盖植物园方、游客与植物爱好者</p>
+            <b>15</b><span>in-depth interviews</span>
+            <p>Included garden staff, visitors, and plant enthusiasts</p>
           </article>
           <article>
-            <b>02</b><span>类实地观察</span>
-            <p>高中研学活动与市民 Wonder Walk</p>
+            <b>02</b><span>field observation settings</span>
+            <p>A high-school field program and a public Wonder Walk</p>
           </article>
         </div>
       </section>
 
       <section className="overview-closing overview-latest-closing">
-        <div className="section-kicker overview-closing-kicker"><span>04</span>团队与周期</div>
+        <div className="section-kicker overview-closing-kicker"><span>04</span>Team & Timeline</div>
         <div className="overview-closing-content">
           <div className="project-period">
-            <h3>项目周期</h3>
-            <strong>2025.10—至今</strong>
+            <h3>Project Timeline</h3>
+            <strong>Oct 2025—Present</strong>
           </div>
           <div className="team-roster">
-            <h3>团队构成</h3>
+            <h3>Team</h3>
             <div className="team-groups">
               <section>
-                <h3>产品＋设计侧</h3>
+                <h3>Product + Design</h3>
                 <div className="team-member-grid design-team">{overviewTeam.design.map((member) => <TeamMember key={member.name} member={member} />)}</div>
               </section>
               <section>
-                <h3>技术侧</h3>
+                <h3>Engineering</h3>
                 <div className="team-member-grid tech-team">{overviewTeam.tech.map((member) => <TeamMember key={member.name} member={member} />)}</div>
               </section>
             </div>
@@ -524,78 +524,78 @@ function ProductPanel() {
       <section className="product-journey">
         <SectionHeading
           index="01"
-          label="核心体验流程"
-          title={<>将一次性的植物识别,<br />转化为主动的观察学习</>}
+          label="Core Experience Flow"
+          title={<>Turn one-off plant identification<br />into active observational learning</>}
         />
-        <div className="product-flow" aria-label="拍照、识别植物、探索趣味知识、跟随引导观察、保存收藏">
-          <b>拍照</b><i>→</i><b>识别植物</b><i>→</i><b>探索趣味知识</b><i>→</i><b>跟随引导观察</b><i>→</i><b>保存收藏</b>
+        <div className="product-flow" aria-label="Photograph, identify, explore, observe, and save">
+          <b>Photograph</b><i>→</i><b>Identify</b><i>→</i><b>Explore</b><i>→</i><b>Observe</b><i>→</i><b>Save</b>
         </div>
       </section>
 
       <section className="product-capabilities">
-        <div className="section-kicker"><span>02</span>产品功能</div>
+        <div className="section-kicker"><span>02</span>Product Capabilities</div>
         <div className="product-capability-grid">
           {productSteps.map((step) => <article key={step.number}><span>{step.number}</span><h3>{step.title}</h3><p>{step.copy}</p></article>)}
         </div>
       </section>
 
       <section className="product-scenes">
-        <div className="section-kicker"><span>03</span>使用场景</div>
+        <div className="section-kicker"><span>03</span>Use Cases</div>
         <div className="product-scene-grid">
           <article>
-            <h3>核心使用场景</h3>
-            <p>初级植物爱好者在植物园、公园、街角遇到感兴趣的植物，拍照识别后，用 1–3 分钟了解其关键识别特征，并跟随问题进行现场观察。</p>
+            <h3>Core Use Case</h3>
+            <p>A beginner plant enthusiast encounters an interesting plant in a botanical garden, park, or neighborhood. After identifying it with a photo, they spend 1–3 minutes learning its defining traits and following guided questions to observe it on site.</p>
             <SceneDiagram type="core" />
           </article>
           <article>
-            <h3>延伸场景</h3>
-            <p>在自然教育活动中，Nature Observer 作为讲解者的数字辅助工具：学生或参与者扫描植物、回答观察问题，并在讲解结束后继续查看图片、故事与生态关系。</p>
+            <h3>Extended Use Case</h3>
+            <p>In nature education programs, Nature Observer becomes a digital aid for educators: students or participants scan plants, answer observation questions, and continue exploring images, stories, and ecological relationships after the guided activity ends.</p>
             <SceneDiagram type="education" />
           </article>
         </div>
       </section>
 
       <section className="product-feature-list">
-        <div className="section-kicker"><span>04</span>关键功能与界面</div>
+        <div className="section-kicker"><span>04</span>Key Features & Interfaces</div>
 
         <article className="product-feature-item">
           <div className="product-feature-copy">
-            <h3>识别植物</h3>
-            <p>当用户在公园、植物园或自然教育活动中遇到陌生植物时，可以通过拍照或上传图片快速获得识别结果。</p>
-            <p className="experience-value">体验价值：快速回答“它是什么”——最基础的问题</p>
+            <h3>Identify Plants</h3>
+            <p>When users encounter an unfamiliar plant in a park, botanical garden, or nature education program, they can quickly identify it by taking or uploading a photo.</p>
+            <p className="experience-value">Experience value: quickly answer the most basic question—“What is it?”</p>
           </div>
-          <ProductDevice src="/assets/product/upload.png" alt="Nature Observer 植物照片上传首页" />
+          <ProductDevice src="/assets/product/upload.png" alt="Nature Observer plant photo upload screen" />
         </article>
 
         <article className="product-feature-item">
           <div className="product-feature-copy">
-            <h3>探索趣味知识</h3>
-            <p>识别完成后，用户首先看到植物名称和最值得记住的特征，再根据兴趣继续探索植物的形态、季节变化、原生地、生态关系以及人文故事。</p>
-            <p className="experience-value">体验价值：按照“了解名称—理解特征—继续探索”的阅读层级，逐层递进，帮助用户在 1–3 分钟内获得最有价值的信息。通过特征记住该植物，通过故事理解该植物为什么值得认识。</p>
+            <h3>Explore Engaging Knowledge</h3>
+            <p>After identification, users first see the plant’s name and its most memorable traits. They can then explore its form, seasonal changes, native range, ecological relationships, and cultural stories according to their interests.</p>
+            <p className="experience-value">Experience value: a progressive reading hierarchy—learn the name, understand the traits, then explore further—helps users find the most valuable information in 1–3 minutes. Traits make the plant memorable; stories reveal why it is worth knowing.</p>
           </div>
-          <ProductDevice src="/assets/product/story-scroll.png" alt="北方红橡树趣味知识页面" scrollable />
+          <ProductDevice src="/assets/product/story-scroll.png" alt="Northern red oak knowledge page" scrollable />
         </article>
 
         <article className="product-feature-item">
           <div className="product-feature-copy">
-            <h3>跟随引导观察</h3>
-            <p>Nature Observer 通过基于真实形态特征的问题，引导用户观察眼前植物的叶片、果实、树皮等部位。选项使用对比图片呈现，降低初学者理解专业植物术语的门槛。</p>
-            <p>用户回答后，系统会解释相应特征；观察结束时，再将关键知识总结为三个 Takeaways，帮助用户记忆与回顾。</p>
-            <p className="experience-value">体验价值：1. 让用户从被动接收识别结果，转变为主动发现植物特征，并提高下次独立识别的可能性。2. 帮助新手逐渐建立观察植物的方法——了解“应该从哪里开始观察一株植物”。</p>
+            <h3>Follow Guided Observation</h3>
+            <p>Nature Observer uses questions grounded in real morphological traits to direct attention to leaves, fruit, bark, and other visible parts of the plant. Comparative images make technical botanical terms easier for beginners to understand.</p>
+            <p>After each response, the system explains the relevant trait. At the end, it summarizes the essential knowledge into three takeaways for memory and review.</p>
+            <p className="experience-value">Experience value: 1. Shift users from passively receiving an identification result to actively discovering plant traits, increasing the chance they can identify it independently next time. 2. Help beginners develop a method for observing plants—knowing where to start.</p>
           </div>
-          <ProductDevice videoSrc="/assets/product/guided-observation-v2.mp4" alt="Nature Observer 跟随引导观察交互演示" />
+          <ProductDevice videoSrc="/assets/product/guided-observation-v2.mp4" alt="Nature Observer guided observation interaction demo" />
         </article>
 
         <article className="product-feature-item">
           <div className="product-feature-copy">
             <div className="feature-heading-row">
-              <h3>保存观察记录</h3>
-              <span className="planned-feature-label">PLANNED FEATURE · 未来功能</span>
+              <h3>Save Observation Records</h3>
+              <span className="planned-feature-label">PLANNED FEATURE · FUTURE</span>
             </div>
-            <p>完成探索后，用户可以保存植物的识别结果、关键特征与观察总结，形成个人的植物收藏。</p>
-            <p className="experience-value">体验价值：支持用户长期记录自己的观察经历。<span>（也为未来关联同一植物在不同地点、不同季节的照片提供基础。）</span></p>
+            <p>After exploring, users can save the identification result, defining traits, and observation summary to build a personal plant collection.</p>
+            <p className="experience-value">Experience value: supports a long-term record of personal observations.<span> It also lays a foundation for linking photos of the same plant across locations and seasons.</span></p>
           </div>
-          <ProductDevice src="/assets/product/history.png" alt="Nature Observer 保存观察记录历史界面" className="planned-device" />
+          <ProductDevice src="/assets/product/history.png" alt="Nature Observer saved observation history screen" className="planned-device" />
         </article>
       </section>
 
@@ -603,9 +603,9 @@ function ProductPanel() {
         <div className="section-kicker"><span>05</span>Demo</div>
         <div className="product-demo-layout">
           <figure className="product-device demo-device">
-            <video controls playsInline preload="metadata" aria-label="Nature Observer 产品体验 Demo">
+            <video controls playsInline preload="metadata" aria-label="Nature Observer product demo">
               <source src="/assets/product/demo-v2.mp4" type="video/mp4" />
-              您的浏览器暂不支持视频播放。
+              Your browser does not support video playback.
             </video>
           </figure>
         </div>
@@ -619,126 +619,126 @@ function ResearchPanel() {
     <div className="panel-inner research-panel-latest">
       <header className="research-intro">
         <div className="section-kicker"><span>01</span>RESEARCH</div>
-        <p>通过线上问卷，先广泛理解自然兴趣与困难，再进入植物园确认人群与需求，最后通过访谈和影子观察理解真实学习行为。</p>
+        <p>We began with an online survey to broadly understand interest in nature and common challenges, then moved into the botanical garden to validate visitor profiles and needs, and finally used interviews and shadowing to understand real learning behavior.</p>
       </header>
       <div className="research-ladder">
-        <article><span>01</span><b>线上问卷</b><small>n = 106</small><p>广泛了解热爱自然的人，在探索自然时的动机、习惯、学习自然的方式、遇到的困难、对学习工具的期待。</p></article>
-        <i>→</i><article><span>02</span><b>游客拦访</b><small>n = 24</small><p>初步了解来植物园或公园的人群画像与科普需求，同时招募后续半结构化访谈参与者。</p></article>
-        <i>→</i><article><span>03</span><b>半结构访谈</b><small>15 人次</small><p>理解人们如何学习植物，以及植物园中不同角色对科普的态度、需求与痛点。</p></article>
-        <i>→</i><article><span>04</span><b>实地观察</b><small>2 类活动</small><p>以 shadow 的形式观察高中生研学活动与市民 Wonder Walk，理解人们在实地中学习植物的方式。</p></article>
+        <article><span>01</span><b>Online Survey</b><small>n = 106</small><p>Explored the motivations, habits, learning approaches, challenges, and tool expectations of people who enjoy nature.</p></article>
+        <i>→</i><article><span>02</span><b>Visitor Intercepts</b><small>n = 24</small><p>Built an initial picture of botanical-garden and park visitors and their educational needs, while recruiting participants for follow-up interviews.</p></article>
+        <i>→</i><article><span>03</span><b>Semi-structured Interviews</b><small>15 interviews</small><p>Examined how people learn about plants and how different roles in a botanical garden view educational content, needs, and pain points.</p></article>
+        <i>→</i><article><span>04</span><b>Field Observation</b><small>2 activities</small><p>Shadowed a high-school field program and a public Wonder Walk to understand how people learn about plants on site.</p></article>
       </div>
 
       <section className="study-block">
         <div className="study-copy">
           <span className="study-index">STUDY 01 · ONLINE SURVEY</span>
-          <h2>线上问卷 <small>n = 106</small></h2>
-          <p className="study-purpose">广泛了解热爱自然的人在探索自然时的动机、习惯、学习方式、困难与工具期待。</p>
-          <div className="method-note"><b>过程</b><p>发放《自然探索体验和工具需求》问卷，有效样本中 18–25 岁占 72.6%；覆盖户外习惯、植物学习方式、好奇心体验、工具使用与功能期待五个维度。</p></div>
-          <a className="source-link" href="https://www.wjx.cn/vm/QpBP7CJ.aspx" target="_blank" rel="noreferrer">查看问卷 ↗</a>
+          <h2>Online Survey <small>n = 106</small></h2>
+          <p className="study-purpose">Broadly explored motivations, habits, learning approaches, challenges, and expectations for tools among people who enjoy nature.</p>
+          <div className="method-note"><b>Process</b><p>We distributed the “Nature Exploration Experience and Tool Needs” survey. Among valid responses, 72.6% were ages 18–25. Questions covered outdoor habits, plant-learning methods, experiences of curiosity, tool use, and feature expectations.</p></div>
+          <a className="source-link" href="https://www.wjx.cn/vm/QpBP7CJ.aspx" target="_blank" rel="noreferrer">View survey ↗</a>
         </div>
-        <figure className="study-visual portrait-doc"><img src="/assets/research/online-questionnaire-v2.webp" alt="自然探索体验和工具需求线上问卷截图" /><figcaption>《自然探索体验和工具需求》问卷</figcaption></figure>
+        <figure className="study-visual portrait-doc"><img src="/assets/research/online-questionnaire-v2.webp" alt="Nature Exploration Experience and Tool Needs online survey" /><figcaption>Nature Exploration Experience and Tool Needs survey</figcaption></figure>
       </section>
 
       <section className="survey-findings research-dark-band">
         <span className="research-band-label">KEY FINDINGS · STUDY 01</span>
         <article>
-          <h3>1. 探索自然，了解植物的兴趣广泛存在</h3>
-          <div className="metric-pair"><div><b>78.3%</b><p>对观察自然感兴趣<br />或非常感兴趣</p></div><div><b>69.8%</b><p>能明确回忆对自然<br />产生好奇的时刻</p></div></div>
+          <h3>1. Interest in exploring nature and learning about plants is widespread</h3>
+          <div className="metric-pair"><div><b>78.3%</b><p>are interested or very interested<br />in observing nature</p></div><div><b>69.8%</b><p>can clearly recall a moment<br />when nature sparked their curiosity</p></div></div>
         </article>
         <article>
-          <h3>2. 大部分人在观察植物中遇到困难</h3>
-          <div className="metric-pair"><div><b>75%</b><p>在学习自然时<br />遇到困难</p></div><div><b>51%</b><p>不知道应该观察<br />什么特征</p></div></div>
+          <h3>2. Most people face challenges when observing plants</h3>
+          <div className="metric-pair"><div><b>75%</b><p>encounter difficulty<br />when learning about nature</p></div><div><b>51%</b><p>do not know which<br />traits to observe</p></div></div>
         </article>
-        <p className="research-wide-finding">3. 兴趣广泛存在，但主动探索知识的人相对较少；大部分人的兴趣是拍照、放松等“氛围性”兴趣。</p>
+        <p className="research-wide-finding">3. Interest is widespread, but relatively few people actively seek knowledge; for most, the appeal is atmospheric—taking photos, relaxing, and enjoying the setting.</p>
       </section>
 
       <section className="study-block reverse-study">
         <div className="study-copy">
           <span className="study-index">STUDY 02 · INTERCEPT SURVEY</span>
-          <h2>游客拦访 <small>n = 24</small></h2>
-          <p className="study-purpose">初步了解来植物园或公园的人群画像与科普需求，同时招募后续半结构化访谈参与者。</p>
-          <div className="method-note"><b>过程</b><p>先与植物园沟通 email 与计划 brief，再在现场发放拦访问卷；24 份回复最终转化为 5 位愿意继续接受访谈的受访者。</p></div>
+          <h2>Visitor Intercepts <small>n = 24</small></h2>
+          <p className="study-purpose">Built an initial picture of botanical-garden and park visitors and their educational needs, while recruiting participants for follow-up semi-structured interviews.</p>
+          <div className="method-note"><b>Process</b><p>We first coordinated with the botanical garden by email and shared a research brief, then distributed an intercept survey on site. Of 24 respondents, five agreed to participate in a follow-up interview.</p></div>
           <div className="study-source-links">
-            <a className="source-link" href="https://forms.gle/Fxrzt4qEehdrrQyu5" target="_blank" rel="noreferrer">查看拦访问卷 ↗</a>
-            <a className="source-link" href="/assets/research/mbgna-visitor-plant-knowledge-interest-survey-result.docx" target="_blank" rel="noreferrer">查看问卷结果 ↗</a>
+            <a className="source-link" href="https://forms.gle/Fxrzt4qEehdrrQyu5" target="_blank" rel="noreferrer">View intercept survey ↗</a>
+            <a className="source-link" href="/assets/research/mbgna-visitor-plant-knowledge-interest-survey-result.docx" target="_blank" rel="noreferrer">View survey results ↗</a>
           </div>
         </div>
         <div className="study-visual doc-pair intercept-visual">
-          <figure><img src="/assets/research/intercept-questionnaire-v2.webp" alt="植物园游客拦访问卷" /><figcaption>拦访问卷</figcaption></figure>
-          <figure><img src="/assets/research/intercept-results-v2.webp" alt="植物园游客拦访问卷结果图表" /><figcaption>问卷结果</figcaption></figure>
+          <figure><img src="/assets/research/intercept-questionnaire-v2.webp" alt="Botanical garden visitor intercept survey" /><figcaption>Intercept survey</figcaption></figure>
+          <figure><img src="/assets/research/intercept-results-v2.webp" alt="Botanical garden visitor intercept survey results" /><figcaption>Survey results</figcaption></figure>
         </div>
       </section>
 
       <section className="visitor-profile-band research-dark-band">
         <span className="research-band-label">KEY FINDINGS · STUDY 02</span>
         <div className="visitor-profile-main">
-          <h3>植物园访客的基本画像</h3>
+          <h3>Botanical Garden Visitor Profile</h3>
           <div className="visitor-profile-groups">
-            <div><b>身份</b><div className="profile-items"><span><img src="/assets/research/icons/professor.svg" alt="" />UM教职工</span><span><img src="/assets/research/icons/student.svg" alt="" />UM学生</span><span><img src="/assets/research/icons/resident.svg" alt="" />安娜堡居民</span></div></div>
-            <div><b>需求</b><div className="profile-items"><span><img src="/assets/research/icons/exercise.svg" alt="" />运动</span><span><img src="/assets/research/icons/family.svg" alt="" />带娃</span><span><img src="/assets/research/icons/gathering.svg" alt="" />聚会放松</span><span><img src="/assets/research/icons/inspiration.svg" alt="" />获得灵感</span><span><img src="/assets/research/icons/learn-plants.svg" alt="" />了解植物</span></div></div>
+            <div><b>Who they are</b><div className="profile-items"><span><img src="/assets/research/icons/professor.svg" alt="" />U-M faculty & staff</span><span><img src="/assets/research/icons/student.svg" alt="" />U-M students</span><span><img src="/assets/research/icons/resident.svg" alt="" />Ann Arbor residents</span></div></div>
+            <div><b>What they seek</b><div className="profile-items"><span><img src="/assets/research/icons/exercise.svg" alt="" />Exercise</span><span><img src="/assets/research/icons/family.svg" alt="" />Family time</span><span><img src="/assets/research/icons/gathering.svg" alt="" />Gather & relax</span><span><img src="/assets/research/icons/inspiration.svg" alt="" />Inspiration</span><span><img src="/assets/research/icons/learn-plants.svg" alt="" />Learn about plants</span></div></div>
           </div>
         </div>
         <div className="visitor-profile-conclusion">
-          <h3>大部分人会阅读植物标牌，<br />约一半认为标牌不能满足好奇心</h3>
-          <p>1. 大部分人都对植物有好奇，且会阅读植物园提供的植物标牌；</p>
-          <p>2. 约一半的人认为目前的植物标牌不能满足自己的好奇心。</p>
+          <h3>Most visitors read plant labels,<br />but about half say the labels do not satisfy their curiosity</h3>
+          <p>1. Most visitors are curious about plants and read the labels provided by the botanical garden.</p>
+          <p>2. About half feel that the current labels do not fully satisfy their curiosity.</p>
         </div>
       </section>
 
       <section className="study-block">
         <div className="study-copy">
           <span className="study-index">STUDY 03 · INTERVIEWS</span>
-          <h2>半结构化访谈 <small>15 人次</small></h2>
-          <p className="study-purpose">了解植物园中不同角色对科普的态度、需求与痛点；了解植物爱好者学习植物的方式。</p>
-          <b className="interview-audience-label">访谈对象</b>
+          <h2>Semi-structured Interviews <small>15 interviews</small></h2>
+          <p className="study-purpose">Explored how different roles in a botanical garden view educational content, their needs and pain points, and how plant enthusiasts learn about plants.</p>
+          <b className="interview-audience-label">Participants</b>
           <div className="participant-tags dark-tags interview-audience-tags">
-            <span>植物园员工<small>GARDEN STAFF</small></span>
-            <span>植物园访客<small>VISITORS</small></span>
-            <span>植物爱好者<small>PLANT ENTHUSIASTS</small></span>
+            <span>Garden Staff<small>GARDEN STAFF</small></span>
+            <span>Garden Visitors<small>VISITORS</small></span>
+            <span>Plant Enthusiasts<small>PLANT ENTHUSIASTS</small></span>
           </div>
-          <div className="method-note"><b>招募方式</b><p>通过小红书、Reddit、LinkedIn 等公共社交媒体、现场拦访与教授 networking 三种方式进行招募，并为三类人群分别准备访谈 protocol。</p></div>
+          <div className="method-note"><b>Recruitment</b><p>We recruited through public social platforms including Xiaohongshu, Reddit, and LinkedIn; through on-site intercepts; and through faculty networking. Separate interview protocols were prepared for each audience.</p></div>
         </div>
-        <div className="study-visual interview-collage" aria-label="线下访谈、线上会议与植物园访谈记录拼贴">
-          <img className="collage-office" src="/assets/research/interview-office.webp" alt="团队开展线下半结构化访谈" />
-          <img className="collage-remote-one" src="/assets/research/interview-remote.webp" alt="团队开展线上半结构化访谈" />
-          <img className="collage-selfie" src="/assets/research/interview-selfie.webp" alt="团队与植物园受访者合影" />
-          <img className="collage-remote-two" src="/assets/research/interview-sarah.png" alt="与 Sarah 开展半结构化访谈" />
+        <div className="study-visual interview-collage" aria-label="Collage of in-person, remote, and botanical-garden interviews">
+          <img className="collage-office" src="/assets/research/interview-office.webp" alt="Team conducting an in-person semi-structured interview" />
+          <img className="collage-remote-one" src="/assets/research/interview-remote.webp" alt="Team conducting a remote semi-structured interview" />
+          <img className="collage-selfie" src="/assets/research/interview-selfie.webp" alt="Team with a botanical-garden interview participant" />
+          <img className="collage-remote-two" src="/assets/research/interview-sarah.png" alt="Semi-structured interview with Sarah" />
         </div>
       </section>
 
       <section className="role-findings">
         <span className="light-band-label">KEY FINDINGS · STUDY 03</span>
-        <article><span>植物园方</span><p>有意愿通过电子工具提供更好的科普；GIS Hub 中仍有大量数据未被转化为公众可理解的内容。</p></article>
-        <article><span>植物园游客</span><p>大部分人来这里是为了放松，学习只是少数人的主要需求。</p></article>
-        <article><span>植物爱好者</span><p>他们学习植物的场景通常发生在身边的公园与街道，而不只在植物园。</p></article>
+        <article><span>Garden Staff</span><p>They want to improve public education through digital tools; the GIS Hub still contains extensive data that has not been translated into accessible public content.</p></article>
+        <article><span>Garden Visitors</span><p>Most come to relax; learning is the primary goal for only a minority.</p></article>
+        <article><span>Plant Enthusiasts</span><p>They usually learn about plants in nearby parks and streets—not only in botanical gardens.</p></article>
       </section>
 
       <section className="study-block reverse-study field-study">
         <div className="study-copy">
           <span className="study-index">STUDY 04 · FIELD OBSERVATION</span>
-          <h2>实地观察 <small>2 类活动</small></h2>
-          <p className="study-purpose">以 shadow 的形式观察高中生研学活动与市民 Wonder Walk，理解人们在实地中学习植物的方式。</p>
+          <h2>Field Observation <small>2 activities</small></h2>
+          <p className="study-purpose">Shadowed a high-school field program and a public Wonder Walk to understand how people learn about plants in real settings.</p>
         </div>
         <figure className="study-visual field-photo-pair">
-          <div><img src="/assets/research/field-forest.webp" alt="团队观察户外自然教育活动" /><img src="/assets/research/field-greenhouse.webp" alt="团队观察温室内植物讲解活动" /></div>
-          <figcaption>高中研学活动与市民 Wonder Walk · Shadowing</figcaption>
+          <div><img src="/assets/research/field-forest.webp" alt="Team observing an outdoor nature education activity" /><img src="/assets/research/field-greenhouse.webp" alt="Team observing plant interpretation in a greenhouse" /></div>
+          <figcaption>High-school field program and public Wonder Walk · Shadowing</figcaption>
         </figure>
       </section>
 
       <section className="field-findings research-dark-band">
         <span className="research-band-label">KEY FINDINGS · STUDY 04</span>
-        <article><h3>1. 植物学习软件可以作为人工讲解的补充，<br />但不具有替代性</h3><p>人工讲解中的很多内容是不可替代的，尤其是本地实时信息、本地具体特定的信息（动植物的小 fun fact）、宏观的生境信息和户外环境中的引导观察。</p></article>
-        <article><h3>2. 研学活动可能成为产品的潜在使用场景</h3><p>研学活动—强制学习场景下</p><ul><li>学生会使用手机扫码查询植物的濒危情况（用 IUCN 网站），是植入电子化软件的入口。</li><li>教师准备的习题，让学生在答题中学习。</li></ul></article>
+        <article><h3>1. Plant-learning software can complement<br />human interpretation, but cannot replace it</h3><p>Many parts of human interpretation are irreplaceable—especially real-time local information, site-specific facts about plants and animals, broader habitat context, and guided observation in the outdoor environment.</p></article>
+        <article><h3>2. Field-learning programs may be a promising use case</h3><p>In structured learning settings:</p><ul><li>Students already scan QR codes on their phones to check plants’ conservation status on the IUCN website, creating a natural entry point for a digital tool.</li><li>Teacher-prepared questions help students learn by answering.</li></ul></article>
       </section>
 
       <section className="insight-map">
-        <SectionHeading index="05" label="SYNTHESIS" title="四类研究，如何共同塑造产品" />
-        <div className="insight-table" role="table" aria-label="研究发现与产品机会">
+        <SectionHeading index="05" label="SYNTHESIS" title="How four research methods shaped the product" />
+        <div className="insight-table" role="table" aria-label="Research findings and product opportunities">
           <div className="table-head" role="row"><span>RESEARCH EVIDENCE</span><span>PRODUCT OPPORTUNITY</span></div>
-          <div role="row"><p>51% 的人不知道应该观察什么特征</p><p>用分步骤问题提供观察框架，而不只返回名称</p></div>
-          <div role="row"><p>主动学习较少，大部分兴趣来自拍照与放松</p><p>以轻量、有趣、现场可读的知识降低进入门槛</p></div>
-          <div role="row"><p>约一半访客认为实体标牌无法满足好奇心</p><p>成为标牌与人工讲解之外的数字知识延展</p></div>
-          <div role="row"><p>人工讲解擅长本地实时信息、故事与环境引导</p><p>数字体验应补充而非替代真实的人际导览</p></div>
+          <div role="row"><p>51% do not know which traits to observe</p><p>Provide an observation framework through step-by-step questions, not just a name</p></div>
+          <div role="row"><p>Active learning is limited; most interest centers on photography and relaxation</p><p>Lower the barrier with lightweight, engaging knowledge designed for on-site reading</p></div>
+          <div role="row"><p>About half of visitors say physical labels do not satisfy their curiosity</p><p>Extend knowledge digitally beyond labels and human interpretation</p></div>
+          <div role="row"><p>Human guides excel at real-time local information, stories, and environmental cues</p><p>The digital experience should complement—not replace—human guidance</p></div>
         </div>
       </section>
     </div>
@@ -747,14 +747,14 @@ function ResearchPanel() {
 
 function EvolutionPanel() {
   const phases = [
-    { num: "01", date: "2025.10 — 2025.12", title: "+Tech Innovation Jam", subtitle: "完成第一版原型", points: ["组建跨学科团队，提出初版 Problem Statement", "开展初步问卷调研，做出以引导观察为核心的自然教育软件原型", "初步了解做产品、短期创业比赛与跨学科合作的全流程"], image: "/assets/development/jam-team.webp" },
-    { num: "02", date: "2026 · WINTER", title: "MVP V1.0", subtitle: "开发可用软件，继续寻找方向", points: ["将比赛原型开发为可以实际使用的 Demo", "与 SEAS 环境学院教师交流项目", "寻找学校创业比赛资源并思考项目如何持续"] },
-    { num: "03", date: "2026 · SPRING", title: "Dare to Dream + Demo Day", subtitle: "深化项目，更新 MVP V2.0", points: ["在 Ross 创业导师指导下完成 15 场访谈与现场调研，重新验证需求", "MVP V2.0 更侧重 Description 页面与植物知识", "Demo Day 展示、轻量可用性测试，并推进与 U-M 植物园合作"], image: "/assets/development/demo-poster.webp" },
-    { num: "04", date: "PLANNED", title: "Botanical Garden Implementation", subtitle: "落地植物园，申请孵化器项目", points: ["把植物园定期更换的科普展板电子化归档", "把下架植物的内容沉淀进 App，延长信息生命周期", "收集高质量植物科普与手绘插画，建立精选数字内容库"], image: "/assets/development/garden-fieldwork.webp" },
+    { num: "01", date: "Oct — Dec 2025", title: "+Tech Innovation Jam", subtitle: "Built the first prototype", points: ["Formed an interdisciplinary team and defined the first problem statement", "Ran an initial survey and created a nature-education prototype centered on guided observation", "Learned the end-to-end process of product development, short-form startup competitions, and interdisciplinary collaboration"], image: "/assets/development/jam-team.webp" },
+    { num: "02", date: "WINTER 2026", title: "MVP V1.0", subtitle: "Built a usable product and kept exploring the direction", points: ["Developed the competition prototype into a working demo", "Discussed the project with faculty at the School for Environment and Sustainability", "Explored university entrepreneurship resources and considered how the project could continue"] },
+    { num: "03", date: "SPRING 2026", title: "Dare to Dream + Demo Day", subtitle: "Deepened the project and updated MVP V2.0", points: ["Completed 15 interviews and field research with guidance from a Ross entrepreneurship mentor, then revalidated the need", "Shifted MVP V2.0 toward the description experience and richer plant knowledge", "Presented at Demo Day, ran lightweight usability testing, and advanced collaboration with the U-M botanical gardens"], image: "/assets/development/demo-poster.webp" },
+    { num: "04", date: "PLANNED", title: "Botanical Garden Implementation", subtitle: "Launch in a botanical garden and apply to an incubator", points: ["Digitally archive educational displays that the garden rotates regularly", "Preserve content about plants no longer on display and extend its useful life in the app", "Build a curated digital library of high-quality plant education and hand-drawn illustrations"], image: "/assets/development/garden-fieldwork.webp" },
   ];
   return (
     <div className="panel-inner">
-      <SectionHeading index="01" label="EVOLUTION" title="从比赛原型，到真实场景中的产品" copy="项目跨越四个阶段：组队与原型、可用 Demo、研究驱动的 V2.0，以及计划中的植物园落地。" />
+      <SectionHeading index="01" label="EVOLUTION" title="From a competition prototype to a product grounded in real contexts" copy="The project spans four stages: team formation and prototyping, a usable demo, a research-driven V2.0, and a planned botanical-garden implementation." />
       <div className="timeline">
         {phases.map((phase, index) => (
           <article className={`timeline-item ${index % 2 ? "right" : "left"}`} key={phase.num}>
@@ -762,7 +762,7 @@ function EvolutionPanel() {
             <div className="timeline-card">
               <span className="phase-date">{phase.date}</span><h3>{phase.title}</h3><h4>{phase.subtitle}</h4>
               <ul>{phase.points.map(point => <li key={point}>{point}</li>)}</ul>
-              {phase.image && <img src={phase.image} alt={`${phase.title} 阶段项目照片`} />}
+              {phase.image && <img src={phase.image} alt={`${phase.title} phase project photo`} />}
             </div>
           </article>
         ))}
@@ -770,9 +770,9 @@ function EvolutionPanel() {
 
       <section className="funding-strip">
         <div><span>GRANT</span><b>$300</b><p>Dare to Dream Phase I</p></div>
-        <div><span>FUEL</span><b>$500</b><p>项目资金支持</p></div>
-        <div><span>CLOUD</span><b>$5K</b><p>Amazon 服务器 Credit</p></div>
-        <div><span>OUTPUT</span><b>V2.0</b><p>上线 Demo 与调研成果</p></div>
+        <div><span>FUEL</span><b>$500</b><p>Project funding</p></div>
+        <div><span>CLOUD</span><b>$5K</b><p>Amazon server credits</p></div>
+        <div><span>OUTPUT</span><b>V2.0</b><p>Published demo and research outcomes</p></div>
       </section>
 
     </div>
@@ -781,24 +781,24 @@ function EvolutionPanel() {
 
 function ReflectionPanel() {
   const lessons = [
-    { num: "01", tag: "SCENARIO", title: "提问的理念没有错，错的是把它做成了考试。", copy: "我们希望通过提问让用户放慢速度、降低信息密度并回到植物本身。但 Quiz 的形式让户外观察像做题，和休闲场景的心理预期产生冲突。下一步应探索更自然、低压力的互动方式。" },
-    { num: "02", tag: "BIAS", title: "机构认同的价值，不一定是访客主动表达的需求。", copy: "植物园 Staff 希望提供更好的科普体验，但许多普通访客以休闲为主，现有标签已经基本够用。这个落差提醒我们警惕“利益相关者偏差”，并把每个判断放回真实使用场景验证。" },
-    { num: "03", tag: "TECH", title: "技术选择不是追求最强模型，而是拆清每项任务。", copy: "早期使用 Plant.id 面临较高成本。当前由 BioCLIP 负责植物识别，以 Gemini 生成对应知识与观察题目。准确性、成本与内容质量必须被分别评估，而不是用单一指标替代产品判断。" },
-    { num: "04", tag: "TEAM", title: "让非技术成员理解工程约束，设计才能真正复用。", copy: "跨学科协作初期会议时间过长。后来由工程成员主动解释实现方式，PM 与设计能够更早理解组件、数据与复用边界，会议也从信息同步转向共同决策。" },
+    { num: "01", tag: "SCENARIO", title: "The idea of asking questions was right; turning them into a test was not.", copy: "We wanted questions to slow users down, reduce information density, and bring attention back to the plant itself. But a quiz made outdoor observation feel like homework and clashed with the mindset of a relaxing visit. The next step is to explore more natural, low-pressure interactions." },
+    { num: "02", tag: "BIAS", title: "Value recognized by an institution is not always a need visitors express themselves.", copy: "Botanical-garden staff want to provide a better educational experience, but many everyday visitors primarily come to relax and find existing labels sufficient. This gap reminds us to watch for stakeholder bias and validate every assumption in the actual context of use." },
+    { num: "03", tag: "TECH", title: "Choosing technology is not about finding the strongest model; it is about separating the tasks clearly.", copy: "Plant.id created high costs early on. Today BioCLIP handles plant identification, while Gemini generates related knowledge and observation prompts. Accuracy, cost, and content quality must be evaluated separately rather than collapsed into a single metric." },
+    { num: "04", tag: "TEAM", title: "Design becomes reusable only when non-technical teammates understand engineering constraints.", copy: "Early interdisciplinary meetings ran too long. Once engineers began explaining implementation choices, product and design could understand components, data, and reuse boundaries earlier. Meetings shifted from information sharing to shared decision-making." },
   ];
   return (
     <div className="panel-inner">
-      <SectionHeading index="01" label="REFLECTION" title="最有价值的结果，不一定是我们最初想做的产品" copy="这些反思不是项目尾声的总结，而是下一轮验证的起点。" />
+      <SectionHeading index="01" label="REFLECTION" title="The most valuable outcome may not be the product we first imagined" copy="These reflections are not an ending; they are the starting point for the next round of validation." />
       <div className="reflection-grid">{lessons.map((lesson) => <article key={lesson.num}><div className="reflection-meta"><span>{lesson.num}</span><small>{lesson.tag}</small></div><h3>{lesson.title}</h3><p>{lesson.copy}</p></article>)}</div>
 
       <section className="big-reflection">
         <div className="pixel-folder" aria-hidden="true"><span>?</span></div>
-        <div><span className="feature-num">NEXT HYPOTHESIS</span><h3>户外更重要的，也许不是“现场学习”，而是记录与收集。</h3><p>真实行为显示，人们在路边或植物园遇到感兴趣的植物时，往往先拍照、识别和保存；更深入的学习可能发生在回家之后、阅读时或有人引导的教育场景中。</p><p>因此，下一阶段将验证：自动关联同一植物在不同季节的照片、生成个人观察档案，是否比强制现场学习更符合真实需求。</p></div>
+        <div><span className="feature-num">NEXT HYPOTHESIS</span><h3>Outdoors, recording and collecting may matter more than learning on the spot.</h3><p>Observed behavior shows that when people encounter an interesting plant on the street or in a botanical garden, they usually photograph, identify, and save it first. Deeper learning may happen later at home, while reading, or in a guided educational setting.</p><p>The next phase will test whether automatically linking photos of the same plant across seasons and generating personal observation archives better matches real needs than requiring on-site learning.</p></div>
       </section>
 
       <section className="closing-note">
         <span>WHAT I LEARNED</span>
-        <blockquote>好的产品研究，不是不断证明最初的想法正确；<br />而是让团队有证据、有勇气，及时改变方向。</blockquote>
+        <blockquote>Good product research is not about repeatedly proving the original idea right;<br />it gives a team the evidence and courage to change direction in time.</blockquote>
         <div className="closing-sign">Nature Observer · Field Notes / 2026</div>
       </section>
     </div>
@@ -821,11 +821,11 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#overview" onClick={(event) => { event.preventDefault(); changeTab("overview"); }} aria-label="返回项目概览">
+        <a className="brand" href="#overview" onClick={(event) => { event.preventDefault(); changeTab("overview"); }} aria-label="Return to project overview">
           <span className="brand-mark brand-logo"><img src="/assets/overview/brand-acorn.webp" alt="" /></span><span>Nature Observer<small>An AI - powered Plant Learning Application</small></span>
         </a>
         <div className="header-actions">
-          <a className="language-switch" href="https://nature-observer-case-study-en.yinping884824.chatgpt.site" lang="en" aria-label="Switch to the English version">Switch to English <span aria-hidden="true">↗</span></a>
+          <a className="language-switch" href="https://nature-observer-case-study.yinping884824.chatgpt.site" lang="zh-CN" aria-label="切换至中文版本">切换至中文 <span aria-hidden="true">↗</span></a>
           <div className="header-meta"><span>Build from · 2025</span><b>keep working</b></div>
         </div>
       </header>
